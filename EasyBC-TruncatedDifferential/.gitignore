@@ -1,0 +1,55 @@
+# Build/editor files: rooted to keep vendored sources and fixtures visible.
+/build/
+/build-*/
+/cmake-build-*/
+/remote-build-*/
+/.idea/
+/.vscode/
+/.agents/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+/compile_commands.json
+/EasyBC
+
+# Generated and historical experiment outputs.
+/data/
+/doc/
+/paper_appendix_bpt/
+/py_cpp_scripts/
+/py_parameters/
+/py_results/
+/r5_analysis/
+/r6_r7_analysis/
+/r8_r12_appendix/
+/tests/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.cache/
+.venv/
+venv/
+*.o
+*.obj
+*.log
+*.tmp
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+/*.cnf
+/*.wcnf
+/*.lp
+/*.mps
+/*.sol
+/*.out
+
+# Local environment and licenses. Example configurations remain tracked.
+.env
+.env.local
+*.local.cmake
+/config.local.sh
+/CMakeUserPresets.json
+gurobi.lic
+# Do not blanket-ignore CSV/JSON/TXT or vendored CNF fixtures.

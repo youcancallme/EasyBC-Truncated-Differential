@@ -1,0 +1,11 @@
+11
+../benchmarks/WordWise/CRAFT.cl
+w
+truncBPTcryptanalysis
+1
+startRound
+1
+endRound
+2
+alpha
+1

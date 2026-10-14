@@ -1,0 +1,1027 @@
+
+
+#include "truncatedDifferentialBPT/TruncDiffBPTMILPcons.h"
+
+void TruncDiffBPTMILPcons::wXorC1(std::string path, int inputIdx1, int inputIdx2, int outputIdx, int &dCounter) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of wXORc1 ! " << std::endl;
+    } else {
+        scons << "A" << inputIdx1 << " + A" << inputIdx2 << " + A" << outputIdx << " - 2 d" << dCounter << " >= 0\n";
+        scons << "d" << dCounter << " - A" << inputIdx1 << " >= 0\n";
+        scons << "d" << dCounter << " - A" << inputIdx2 << " >= 0\n";
+        scons << "d" << dCounter << " - A" << outputIdx << " >= 0\n";
+        dCounter++;
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::wXorC2(std::string path, int inputIdx1, int inputIdx2, int outputIdx) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of wXORc2 ! " << std::endl;
+    } else {
+        scons << "A" << inputIdx1 << " + A" << inputIdx2 << " - A" << outputIdx << " >= 0\n";
+        scons << "A" << inputIdx1 << " - A" << inputIdx2 << " + A" << outputIdx << " >= 0\n";
+        scons << "- A" << inputIdx1 << " + A" << inputIdx2 << " + A" << outputIdx << " >= 0\n";
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::wXorC3(std::string path, int inputIdx1, int inputIdx2, int outputIdx, int &dCounter, int &xorPcounter) {
+    std::ofstream scons(path, std::ios::app);
+
+    if (!scons) {
+        std::cout << "Wrong file path of wXORc3 ! " << std::endl;
+
+    } else {
+        scons << "A" << inputIdx1 << " + A" << inputIdx2 << " + A" << outputIdx << " - 2 d" << dCounter << " >= 0\n";
+        scons << "d" << dCounter << " - A" << inputIdx1 << " >= 0\n";
+        scons << "d" << dCounter << " - A" << inputIdx2 << " >= 0\n";
+        scons << "d" << dCounter << " - A" << outputIdx << " >= 0\n";
+        dCounter++;
+
+        scons << "A" << inputIdx1 << " - xorP" << xorPcounter << " >= 0\n";
+        scons << "A" << inputIdx2 << " - xorP" << xorPcounter << " >= 0\n";
+        scons << "- A" << outputIdx << " - xorP" << xorPcounter << " >= -1\n";
+        scons << "- A" << inputIdx1 << " - A" << inputIdx2 << " + A" << outputIdx << " + xorP" << xorPcounter << " >= -1\n";
+        xorPcounter++;
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::wAndOrC(std::string path, int inputIdx1, int inputIdx2, int outputIdx) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of wAndOrC ! " << std::endl;
+    } else {
+        scons << "A" << inputIdx1 << " + A" << inputIdx2 << " - A" << outputIdx << " >= 0\n";
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::wLinearC1(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx, int &dCounter,
+                                     int branchMin, int branchMax) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of wLinearC1 ! " << std::endl;
+    } else {
+        for (int i : inputIdx)
+            scons << "A" << i << " + ";
+        for (int i = 0; i < outputIdx.size(); ++i) {
+            scons << "A" << outputIdx[i];
+            if (i < outputIdx.size() - 1)
+                scons << " + ";
+        }
+        scons << " - " << branchMin << " d" << dCounter << " >= 0\n";
+        for (int i : inputIdx)
+            scons << "A" << i << " + ";
+        for (int i = 0; i < outputIdx.size(); ++i) {
+            scons << "A" << outputIdx[i];
+            if (i < outputIdx.size() - 1)
+                scons << " + ";
+        }
+        scons << " <= " << branchMax << "\n";
+
+        for (int i : inputIdx)
+            scons << "d" << dCounter << " - A" << i << " >= 0\n";
+        dCounter++;
+
+        int omega = outputIdx.size();
+        for (int i = 0; i < inputIdx.size(); ++i) {
+            if (i != inputIdx.size() - 1)
+                scons << omega << " A" << inputIdx[i] << " + ";
+            else
+                scons << omega << " A" << inputIdx[i];
+        }
+        for (auto i : outputIdx) {
+            scons << " - A" << i;
+        }
+        scons << " >= 0\n";
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::wLinearC2(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx, int &dCounter,
+                                     int branchMin, int branchMax) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of wLinearC2 ! " << std::endl;
+    } else {
+        for (int i : inputIdx)
+            scons << "A" << i << " + ";
+        for (int i = 0; i < outputIdx.size(); ++i) {
+            scons << "A" << outputIdx[i];
+            if (i < outputIdx.size() - 1)
+                scons << " + ";
+        }
+        scons << " - " << branchMin << " d" << dCounter << " >= 0\n";
+        for (int i : inputIdx)
+            scons << "A" << i << " + ";
+        for (int i = 0; i < outputIdx.size(); ++i) {
+            scons << "A" << outputIdx[i];
+            if (i < outputIdx.size() - 1)
+                scons << " + ";
+        }
+        scons << " <= " << branchMax << "\n";
+
+        int omega1 = inputIdx.size();
+        scons << omega1 << " d" << dCounter;
+        for (int i : inputIdx)
+            scons << " - A" << i;
+        scons << " >= 0\n";
+        dCounter++;
+
+        int omega2 = outputIdx.size();
+        for (int i = 0; i < inputIdx.size(); ++i) {
+            if (i != inputIdx.size() - 1)
+                scons << omega2 << " A" << inputIdx[i] << " + ";
+            else
+                scons << omega2 << " A" << inputIdx[i];
+        }
+        for (auto i : outputIdx) {
+            scons << " - A" << i;
+        }
+        scons << " >= 0\n";
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::wLinearBPT(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx, int &dCounter,
+                                      int branchMin, int branchMax, int &Pcounter, std::vector<std::vector<int>> ineqs, std::vector<std::vector<int>> enqs, int extLen) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of wLinearBPT! " << std::endl;
+    } else {
+
+        bool constraints_added = false;
+
+        if (ineqs.size() > 0) {
+            for (auto ineq : ineqs) {
+                if (ineq.empty())
+                    continue;
+                int idx = 0;
+
+                for (auto i : inputIdx) {
+                    if ((ineq[idx]) >= 0)
+                        scons << " + " << abs((ineq[idx])) << " A" << i;
+                    else
+                        scons << " - " << abs((ineq[idx])) << " A" << i;
+                    idx++;
+                }
+
+                for (auto i : outputIdx) {
+                    if ((ineq[idx]) >= 0)
+                        scons << " + " << abs((ineq[idx])) << " A" << i;
+                    else
+                        scons << " - " << abs((ineq[idx])) << " A" << i;
+                    idx++;
+                }
+
+                for (int i = 0; i < extLen; i++) {
+                    if ((ineq[idx]) >= 0)
+                        scons << " + " << abs((ineq[idx])) << " P" << i + Pcounter;
+                    else
+                        scons << " - " << abs((ineq[idx])) << " P" << i + Pcounter;
+                    idx++;
+                }
+
+                if ((ineq[idx]) > 0)
+                    scons << " >= -" << abs((ineq[idx])) << "\n";
+                else
+                    scons << " >= " << abs((ineq[idx])) << "\n";
+            }
+            constraints_added = true;
+        }
+
+        if (enqs.size() > 0) {
+            for (auto enq : enqs) {
+                if (enq.empty())
+                    continue;
+                int idx = 0;
+
+                for (auto i : inputIdx) {
+                    if ((enq[idx]) >= 0)
+                        scons << " + " << abs((enq[idx])) << " A" << i;
+                    else
+                        scons << " - " << abs((enq[idx])) << " A" << i;
+                    idx++;
+                }
+
+                for (auto i : outputIdx) {
+                    if ((enq[idx]) >= 0)
+                        scons << " + " << abs((enq[idx])) << " A" << i;
+                    else
+                        scons << " - " << abs((enq[idx])) << " A" << i;
+                    idx++;
+                }
+
+                for (int i = 0; i < extLen; i++) {
+                    if ((enq[idx]) >= 0)
+                        scons << " + " << abs((enq[idx])) << " P" << i + Pcounter;
+                    else
+                        scons << " - " << abs((enq[idx])) << " P" << i + Pcounter;
+                    idx++;
+                }
+
+                if ((enq[idx]) > 0)
+                    scons << " = -" << abs((enq[idx])) << "\n";
+                else
+                    scons << " = " << abs((enq[idx])) << "\n";
+            }
+            constraints_added = true;
+        }
+
+        if (constraints_added) {
+            Pcounter += extLen;
+        }
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bXorC1(std::string path, int inputIdx1, int inputIdx2, int outputIdx, int &dCounter) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of bXORc1 ! " << std::endl;
+    } else {
+        scons << "x" << inputIdx1 << " + x" << inputIdx2 << " + x" << outputIdx << " - 2 d" << dCounter << " >= 0\n";
+        scons << "d" << dCounter << " - x" << inputIdx1 << " >= 0\n";
+        scons << "d" << dCounter << " - x" << inputIdx2 << " >= 0\n";
+        scons << "d" << dCounter << " - x" << outputIdx << " >= 0\n";
+        scons << "x" << inputIdx1 << " + x" << inputIdx2 << " + x" << outputIdx << " <= 2\n";
+        dCounter++;
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bXorC2(std::string path, int inputIdx1, int inputIdx2, int outputIdx) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of bXORc2 ! " << std::endl;
+    } else {
+        scons << "x" << inputIdx1 << " + x" << inputIdx2 << " + x" << outputIdx << " <= 2\n";
+        scons << "x" << inputIdx1 << " + x" << inputIdx2 << " - x" << outputIdx << " >= 0\n";
+        scons << "x" << inputIdx1 << " - x" << inputIdx2 << " + x" << outputIdx << " >= 0\n";
+        scons << "-x" << inputIdx1 << " + x" << inputIdx2 << " + x" << outputIdx << " >= 0\n";
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bXorC3(std::string path, int inputIdx1, int inputIdx2, int outputIdx, int &dCounter) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of bXORc3 ! " << std::endl;
+    } else {
+        scons << "x" << inputIdx1 << " + x" << inputIdx2 << " + x" << outputIdx << " - 2 d" << dCounter << " = 0\n";
+        dCounter++;
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bMatrixEntryC12(std::string path, std::vector<std::vector<int>> inputIdx, std::vector<int> outputIdx,
+                                           std::vector<int> overflows, std::vector<int> module, int &xCounter, int &yCounter,
+                                           int &fCounter, int &dCounter, int chooser) {
+
+    std::vector<int> input1 = inputIdx[0];
+    std::vector<int> input2 = inputIdx[1];
+    std::vector<int> output;
+
+    for (int i = 0; i < input1.size(); ++i) {
+        output.push_back(xCounter);
+        xCounter++;
+    }
+
+    for (int i = 0; i < input1.size(); ++i) {
+        if (chooser == 1)
+            bXorC1(path, input1[i], input2[i], output[i], dCounter);
+        else if (chooser == 2)
+            bXorC2(path, input1[i], input2[i], output[i]);
+    }
+    std::vector<int> lastOut;
+
+    if (inputIdx.size() > 2) {
+        for (int i = 2; i < inputIdx.size(); ++i) {
+
+            input1 = std::move(inputIdx[i]);
+            input2 = std::move(output);
+            output.clear();
+
+            for (int j = 0; j < input1.size(); ++j) {
+                output.push_back(xCounter);
+                xCounter++;
+            }
+            for (int j = 0; j < input1.size(); ++j) {
+                if (chooser == 1)
+                    bXorC1(path, input1[j], input2[j], output[j], dCounter);
+                else if (chooser == 2)
+                    bXorC2(path, input1[j], input2[j], output[j]);
+            }
+            if (i == inputIdx.size() - 1)
+                lastOut = std::move(output);
+        }
+    }
+
+    int fIdx = fCounter;
+    fCounter++;
+    bool fFlag = true;
+
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+
+        if (overflows.size() == 0) {
+            fFlag = false;
+            for (int i = 0; i < lastOut.size(); ++i) {
+                scons << "x" << outputIdx[i] << " - x" << lastOut[i] << " = 0\n";
+            }
+        } else if (overflows.size() == 1) {
+            scons << "f" << fIdx << " - x" << overflows[0] << " = 0\n";
+        } else if (overflows.size() >= 2) {
+            int XORout = xCounter;
+            xCounter++;
+            if (chooser == 1)
+                bXorC1(path, overflows[0], overflows[1], XORout, dCounter);
+            else if (chooser == 2)
+                bXorC2(path, overflows[0], overflows[1], XORout);
+            if (overflows.size() > 2) {
+                for (int i = 2; i < overflows.size(); ++i) {
+                    int in1 = overflows[i], in2 = XORout;
+                    XORout = xCounter;
+                    xCounter++;
+                    if (chooser == 1)
+                        bXorC1(path, in1, in2, XORout, dCounter);
+                    else if (chooser == 2)
+                        bXorC2(path, in1, in2, XORout);
+                }
+            }
+            scons << "f" << fIdx << " - x" << XORout << " = 0\n";
+        }
+    }
+    if (fFlag) {
+
+        for (int i = 0; i < module.size(); ++i) {
+
+            if (module[module.size() - 1 - i] == 0) {
+                scons << "f" << fIdx << " == 1 -> " << "x" << outputIdx[module.size() - 1 - i] << " - x" << lastOut[i] << " = 0\n";
+                scons << "f" << fIdx << " == 0 -> " << "x" << outputIdx[module.size() - 1 - i] << " - x" << lastOut[i] << " = 0\n";
+            } else if (module[module.size() - 1 - i] == 1) {
+
+                scons << "f" << fIdx << " == 1 -> " << "x" << outputIdx[module.size() - 1 - i] << " + x" << lastOut[i] << " = 0\n";
+                scons << "f" << fIdx << " == 0 -> " << "x" << outputIdx[module.size() - 1 - i] << " - x" << lastOut[i] << " = 0\n";
+            }
+        }
+    }
+}
+
+void TruncDiffBPTMILPcons::bNXorC3(std::string path, std::vector<int> inputIdx, int outputIdx, int &yCounter) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of bNXorC3 ! " << std::endl;
+    } else {
+        int x0Counter = 0;
+        for (int i = 0; i < inputIdx.size() - 1; ++i) {
+            scons << "x" << inputIdx[i] << " + ";
+
+            if (inputIdx[i] == 0)
+                x0Counter++;
+        }
+        if (inputIdx[inputIdx.size() - 1] == 0)
+            x0Counter++;
+        scons << "x" << inputIdx[inputIdx.size() - 1] << " - 2 y" << yCounter << " - x" << outputIdx << " = 0\n";
+        scons << "y" << yCounter << " >= 0\n";
+        scons << "y" << yCounter << " - " << (inputIdx.size() - x0Counter) / 2 << " <= 0\n";
+        yCounter++;
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bMatrixEntryC3(std::string path, std::vector<std::vector<int>> inputIdx, std::vector<int> outputIdx,
+                                          std::vector<int> overflows, std::vector<int> module, int &xCounter, int &yCounter,
+                                          int &fCounter) {
+
+    std::vector<int> output;
+    for (int i = 0; i < outputIdx.size(); ++i) {
+        output.push_back(xCounter);
+        xCounter++;
+    }
+
+    for (int i = 0; i < inputIdx[0].size(); ++i) {
+        std::vector<int> tInput;
+        for (int j = 0; j < inputIdx.size(); ++j) {
+            tInput.push_back(inputIdx[j][i]);
+        }
+        bNXorC3(path, tInput, output[i], yCounter);
+    }
+
+    int fIdx = fCounter;
+    fCounter++;
+    bool fFlag = true;
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+
+        if (overflows.empty()) {
+            fFlag = false;
+            for (int i = 0; i < output.size(); ++i) {
+
+                scons << "x" << outputIdx[i] << " - x" << output[i] << " = 0\n";
+            }
+        }
+
+        else if (overflows.size() == 1) {
+
+            scons << "f" << fIdx << " - x" << overflows[0] << " = 0\n";
+        }
+
+        else if (overflows.size() >= 2) {
+            for (int i = 0; i < overflows.size() - 1; ++i) {
+
+                scons << "x" << overflows[i] << " + ";
+            }
+
+            scons << "x" << overflows[overflows.size() - 1] << " - 2 y" << yCounter << " + f" << fIdx << " = 0\n";
+
+            scons << "y" << yCounter << " >= 0\n";
+
+            scons << "y" << yCounter << " - " << (overflows.size() + 1) / 2 << " <= 0\n";
+            yCounter++;
+        }
+    }
+
+    if (fFlag) {
+        for (int i = 0; i < module.size(); ++i) {
+            if (module[module.size() - 1 - i] == 0) {
+
+                scons << "f" << fIdx << " == 1 -> " << "x" << outputIdx[module.size() - 1 - i] << " - x" << output[i] << " = 0\n";
+                scons << "f" << fIdx << " == 0 -> " << "x" << outputIdx[module.size() - 1 - i] << " - x" << output[i] << " = 0\n";
+            } else if (module[module.size() - 1 - i] == 1) {
+
+                scons << "f" << fIdx << " == 1 -> " << "x" << outputIdx[module.size() - 1 - i] << " + x" << output[i] << " = 0\n";
+                scons << "f" << fIdx << " == 0 -> " << "x" << outputIdx[module.size() - 1 - i] << " - x" << output[i] << " = 0\n";
+            }
+        }
+    }
+
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bSboxC1(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx,
+                                   std::vector<std::vector<int>> ineqs, int branchMin, int &dCounter, int &ACounter, bool ifInjective) {
+
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+
+        for (auto i : inputIdx)
+            scons << "x" << i << " + ";
+        for (int i = 0; i < outputIdx.size(); ++i) {
+            if (i != outputIdx.size() - 1)
+                scons << "x" << outputIdx[i] << " + ";
+            else
+                scons << "x" << outputIdx[i];
+        }
+        scons << " - " << branchMin << " d" << dCounter << " >= 0\n";
+
+        for (auto i : inputIdx)
+            scons << "d" << dCounter << " - x" << i << " >= 0\n";
+        for (auto i : outputIdx)
+            scons << "d" << dCounter << " - x" << i << " >= 0\n";
+        dCounter++;
+
+        for (int i = 0; i < inputIdx.size(); ++i) {
+            if (i != inputIdx.size() - 1)
+                scons << "x" << inputIdx[i] << " + ";
+            else
+                scons << "x" << inputIdx[i];
+        }
+        scons << " - A" << ACounter << " >= 0\n";
+
+        for (auto i : inputIdx)
+            scons << "A" << ACounter << " - x" << i << " >= 0\n";
+        ACounter++;
+
+        if (ifInjective) {
+            int omega = inputIdx.size();
+
+            for (int i = 0; i < inputIdx.size(); ++i) {
+                if (i != inputIdx.size() - 1)
+                    scons << omega << " x" << inputIdx[i] << " + ";
+                else
+                    scons << omega << " x" << inputIdx[i];
+            }
+            for (auto i : outputIdx) {
+                scons << " - x" << i;
+            }
+            scons << " >= 0\n";
+
+            for (int i = 0; i < outputIdx.size(); ++i) {
+                if (i != outputIdx.size() - 1)
+                    scons << omega << " x" << outputIdx[i] << " + ";
+                else
+                    scons << omega << " x" << outputIdx[i];
+            }
+            for (auto i : inputIdx) {
+                scons << " - x" << i;
+            }
+            scons << " >= 0\n";
+        }
+
+        if (ineqs.size() > 1) {
+            for (auto ineq : ineqs) {
+                int idx = 0;
+
+                for (auto i : inputIdx) {
+                    if ((ineq[idx]) >= 0)
+                        scons << " + " << abs((ineq[idx])) << " x" << i;
+                    else
+                        scons << " - " << abs((ineq[idx])) << " x" << i;
+                    idx++;
+                }
+
+                for (auto i : outputIdx) {
+                    if ((ineq[idx]) >= 0)
+                        scons << " + " << abs((ineq[idx])) << " x" << i;
+                    else
+                        scons << " - " << abs((ineq[idx])) << " x" << i;
+                    idx++;
+                }
+
+                if ((ineq[idx]) > 0)
+                    scons << " >= -" << abs((ineq[idx])) << "\n";
+                else
+                    scons << " >= " << abs((ineq[idx])) << "\n";
+            }
+        }
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bSboxC2(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx,
+                                   std::vector<std::vector<int>> ineqs, int &ACounter, bool ifInjective) {
+
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+
+        for (int i = 0; i < inputIdx.size(); ++i) {
+            if (i != inputIdx.size() - 1)
+                scons << "x" << inputIdx[i] << " + ";
+            else
+                scons << "x" << inputIdx[i];
+        }
+        scons << " - A" << ACounter << " >= 0\n";
+
+        for (auto i : inputIdx)
+            scons << "A" << ACounter << " - x" << i << " >= 0\n";
+        ACounter++;
+
+        if (ifInjective) {
+            int omega = inputIdx.size();
+
+            for (int i = 0; i < inputIdx.size(); ++i) {
+                if (i != inputIdx.size() - 1)
+                    scons << omega << " x" << inputIdx[i] << " + ";
+                else
+                    scons << omega << " x" << inputIdx[i];
+            }
+            for (auto i : outputIdx) {
+                scons << " - x" << i;
+            }
+            scons << " >= 0\n";
+
+            for (int i = 0; i < outputIdx.size(); ++i) {
+                if (i != outputIdx.size() - 1)
+                    scons << omega << " x" << outputIdx[i] << " + ";
+                else
+                    scons << omega << " x" << outputIdx[i];
+            }
+            for (auto i : inputIdx) {
+                scons << " - x" << i;
+            }
+            scons << " >= 0\n";
+        }
+
+        for (auto ineq : ineqs) {
+            int idx = 0;
+
+            for (auto i : inputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+
+            for (auto i : outputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+
+            if ((ineq[idx]) > 0)
+                scons << " >= -" << abs((ineq[idx])) << "\n";
+            else
+                scons << " >= " << abs((ineq[idx])) << "\n";
+        }
+    }
+
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bSboxC3(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx,
+                                   std::vector<std::vector<int>> ineqs, int &ACounter) {
+
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+
+        for (int i = 0; i < inputIdx.size(); ++i) {
+            if (i != inputIdx.size() - 1)
+                scons << "x" << inputIdx[i] << " + ";
+            else
+                scons << "x" << inputIdx[i];
+        }
+        scons << " - A" << ACounter << " >= 0\n";
+
+        for (auto i : inputIdx)
+            scons << "A" << ACounter << " - x" << i << " >= 0\n";
+        ACounter++;
+
+        for (auto ineq : ineqs) {
+            int idx = 0;
+
+            for (auto i : inputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+
+            for (auto i : outputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+
+            if ((ineq[idx]) > 0)
+                scons << " >= -" << abs((ineq[idx])) << "\n";
+            else
+                scons << " >= " << abs((ineq[idx])) << "\n";
+        }
+    }
+
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bAddC(std::string path, std::vector<int> inputIdx1, std::vector<int> inputIdx2, std::vector<int> outputIdx,
+                                 std::vector<std::vector<int>> ineqs, int &dCounter, int &PCounter) {
+
+    int addSize = inputIdx1.size();
+
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+
+        scons << "x" << inputIdx1[addSize - 1] << " + x" << inputIdx2[addSize - 1]
+              << " + x" << outputIdx[addSize - 1] << " <= 2\n";
+
+        scons << "x" << inputIdx1[addSize - 1] << " + x" << inputIdx2[addSize - 1]
+              << " + x" << outputIdx[addSize - 1] << " - 2 d" << dCounter << " >= 0\n";
+
+        scons << "d" << dCounter << " - x" << inputIdx1[addSize - 1] << " >= 0\n";
+
+        scons << "d" << dCounter << " - x" << inputIdx2[addSize - 1] << " >= 0\n";
+
+        scons << "d" << dCounter << " - x" << outputIdx[addSize - 1] << " >= 0\n";
+
+        dCounter++;
+
+        for (int i = addSize - 1; i > 0; --i) {
+            for (auto ineq : ineqs) {
+                int idx = 0;
+
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << inputIdx1[i];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << inputIdx1[i];
+                idx++;
+
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << inputIdx2[i];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << inputIdx2[i];
+                idx++;
+
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << outputIdx[i];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << outputIdx[i];
+                idx++;
+
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << inputIdx1[i - 1];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << inputIdx1[i - 1];
+                idx++;
+
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << inputIdx2[i - 1];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << inputIdx2[i - 1];
+                idx++;
+
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << outputIdx[i - 1];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << outputIdx[i - 1];
+                idx++;
+
+                if (ineq[idx] > 0)
+                    scons << " >= -" << abs(ineq[idx]) << "\n";
+                else
+                    scons << " >= +" << abs(ineq[idx]) << "\n";
+            }
+        }
+    }
+
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::bAndOrC(std::string path, int inputIdx1, int inputIdx2, int outputIdx) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of bAndC1 ! " << std::endl;
+    } else {
+        scons << "x" << inputIdx1 << " + x" << inputIdx2 << " - x" << outputIdx << " >= 0\n";
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::dSboxC1(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx,
+                                   std::vector<std::vector<int>> ineqs, int branchMin, int &dCounter, int &PCounter,
+                                   bool ifInjective, int extLen) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+        for (auto i : inputIdx)
+            scons << "x" << i << " + ";
+        for (int i = 0; i < outputIdx.size(); ++i) {
+            if (i != outputIdx.size() - 1)
+                scons << "x" << outputIdx[i] << " + ";
+            else
+                scons << "x" << outputIdx[i];
+        }
+        scons << " - " << branchMin << " d" << dCounter << " >= 0\n";
+        for (auto i : inputIdx)
+            scons << "d" << dCounter << " - x" << i << " >= 0\n";
+        for (auto i : outputIdx)
+            scons << "d" << dCounter << " - x" << i << " >= 0\n";
+        dCounter++;
+
+        if (ifInjective) {
+            int omega = inputIdx.size();
+            for (int i = 0; i < inputIdx.size(); ++i) {
+                if (i != inputIdx.size() - 1)
+                    scons << omega << " x" << inputIdx[i] << " + ";
+                else
+                    scons << omega << " x" << inputIdx[i];
+            }
+            for (auto i : outputIdx) {
+                scons << " - x" << i;
+            }
+            scons << " >= 0\n";
+            for (int i = 0; i < outputIdx.size(); ++i) {
+                if (i != outputIdx.size() - 1)
+                    scons << omega << " x" << outputIdx[i] << " + ";
+                else
+                    scons << omega << " x" << outputIdx[i];
+            }
+            for (auto i : inputIdx) {
+                scons << " - x" << i;
+            }
+            scons << " >= 0\n";
+        }
+
+        for (auto ineq : ineqs) {
+            int idx = 0;
+            for (auto i : inputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+            for (auto i : outputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+            for (int i = 0; i < extLen; ++i) {
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " P" << i + PCounter;
+                else
+                    scons << " - " << abs(ineq[idx]) << " P" << i + PCounter;
+                idx++;
+            }
+            if ((ineq[idx]) > 0)
+                scons << " >= -" << abs((ineq[idx])) << "\n";
+            else
+                scons << " >= " << abs((ineq[idx])) << "\n";
+        }
+        PCounter += extLen;
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::dSboxC2(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx,
+                                   std::vector<std::vector<int>> ineqs, int &PCounter, bool ifInjective, int extLen) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+        if (ifInjective) {
+            int omega = inputIdx.size();
+            for (int i = 0; i < inputIdx.size(); ++i) {
+                if (i != inputIdx.size() - 1)
+                    scons << omega << " x" << inputIdx[i] << " + ";
+                else
+                    scons << omega << " x" << inputIdx[i];
+            }
+            for (auto i : outputIdx) {
+                scons << " - x" << i;
+            }
+            scons << " >= 0\n";
+            for (int i = 0; i < outputIdx.size(); ++i) {
+                if (i != outputIdx.size() - 1)
+                    scons << omega << " x" << outputIdx[i] << " + ";
+                else
+                    scons << omega << " x" << outputIdx[i];
+            }
+            for (auto i : inputIdx) {
+                scons << " - x" << i;
+            }
+            scons << " >= 0\n";
+        }
+
+        for (auto ineq : ineqs) {
+            int idx = 0;
+            for (auto i : inputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+            for (auto i : outputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+            for (int i = 0; i < extLen; ++i) {
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " P" << i + PCounter;
+                else
+                    scons << " - " << abs(ineq[idx]) << " P" << i + PCounter;
+                idx++;
+            }
+            if ((ineq[idx]) > 0)
+                scons << " >= -" << abs((ineq[idx])) << "\n";
+            else
+                scons << " >= " << abs((ineq[idx])) << "\n";
+        }
+        PCounter += extLen;
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::dSboxC3(std::string path, std::vector<int> inputIdx, std::vector<int> outputIdx,
+                                   std::vector<std::vector<int>> ineqs, int &PCounter, int extLen) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+        for (auto ineq : ineqs) {
+            int idx = 0;
+            for (auto i : inputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+            for (auto i : outputIdx) {
+                if ((ineq[idx]) >= 0)
+                    scons << " + " << abs((ineq[idx])) << " x" << i;
+                else
+                    scons << " - " << abs((ineq[idx])) << " x" << i;
+                idx++;
+            }
+            for (int i = 0; i < extLen; ++i) {
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " P" << i + PCounter;
+                else
+                    scons << " - " << abs(ineq[idx]) << " P" << i + PCounter;
+                idx++;
+            }
+            if ((ineq[idx]) > 0)
+                scons << " >= -" << abs((ineq[idx])) << "\n";
+            else
+                scons << " >= " << abs((ineq[idx])) << "\n";
+        }
+        PCounter += extLen;
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::dAddC(std::string path, std::vector<int> inputIdx1, std::vector<int> inputIdx2, std::vector<int> outputIdx,
+                                 std::vector<std::vector<int>> ineqs, int &dCounter, int &PCounter) {
+    int addSize = inputIdx1.size();
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path ! " << std::endl;
+    } else {
+        scons << "x" << inputIdx1[addSize - 1] << " + x" << inputIdx2[addSize - 1] << " + x" << outputIdx[addSize - 1] << " <= 2\n";
+        scons << "x" << inputIdx1[addSize - 1] << " + x" << inputIdx2[addSize - 1] << " + x" << outputIdx[addSize - 1] << " - 2 d" << dCounter << " >= 0\n";
+        scons << "d" << dCounter << " - x" << inputIdx1[addSize - 1] << " >= 0\n";
+        scons << "d" << dCounter << " - x" << inputIdx2[addSize - 1] << " >= 0\n";
+        scons << "d" << dCounter << " - x" << outputIdx[addSize - 1] << " >= 0\n";
+        dCounter++;
+
+        for (int i = addSize - 1; i > 0; --i) {
+            for (auto ineq : ineqs) {
+                int idx = 0;
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << inputIdx1[i];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << inputIdx1[i];
+                idx++;
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << inputIdx2[i];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << inputIdx2[i];
+                idx++;
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << outputIdx[i];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << outputIdx[i];
+                idx++;
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << inputIdx1[i - 1];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << inputIdx1[i - 1];
+                idx++;
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << inputIdx2[i - 1];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << inputIdx2[i - 1];
+                idx++;
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " x" << outputIdx[i - 1];
+                else
+                    scons << " - " << abs(ineq[idx]) << " x" << outputIdx[i - 1];
+                idx++;
+
+                if (ineq[idx] >= 0)
+                    scons << " + " << abs(ineq[idx]) << " P" << PCounter;
+                else
+                    scons << " - " << abs(ineq[idx]) << " P" << PCounter;
+                idx++;
+
+                if (ineq[idx] > 0)
+                    scons << " >= -" << abs(ineq[idx]) << "\n";
+                else
+                    scons << " >= +" << abs(ineq[idx]) << "\n";
+            }
+            PCounter++;
+        }
+    }
+    scons.close();
+}
+
+void TruncDiffBPTMILPcons::dAndOrC(std::string path, int inputIdx1, int inputIdx2, int outputIdx, int &PCounter) {
+    std::ofstream scons(path, std::ios::app);
+    if (!scons) {
+        std::cout << "Wrong file path of bAndC1 ! " << std::endl;
+    } else {
+        scons << "- x" << inputIdx1 << " - x" << inputIdx2 << " - x" << outputIdx << " + 3 P" << PCounter << " >= 0\n";
+        scons << "x" << inputIdx1 << " + x" << inputIdx2 << " - P" << PCounter << " >= 0\n";
+        PCounter++;
+    }
+    scons.close();
+}
