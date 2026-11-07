@@ -9,7 +9,7 @@
 | 路径 | 内容 |
 | --- | --- |
 | [`附录材料/`](./附录材料/) | **论文正文与附录 A-C 整合的完整技术报告**, 以及按附录分类整理的实验补充文件. |
-| [`EasyBC-TruncatedDifferential/`](./EasyBC-TruncatedDifferential/) | 完整代码工程, 包含构建文件、密码描述、参数示例及源代码. |
+| [`EasyBC-TruncatedDifferential/`](./EasyBC-TruncatedDifferential/) | 完整代码, 包含构建文件、密码描述、参数示例及源代码. |
 | `EasyBC-TruncatedDifferential/parameter_examples/` | MILP/SAT 分析的参数文件示例. |
 | `EasyBC-TruncatedDifferential/include/`、`EasyBC-TruncatedDifferential/lib/` | EasyBC 解析、预处理、BPT 构建与差分分析等模块的头文件和实现. |
 
@@ -50,7 +50,7 @@ EasyBC .cl 密码描述 + 分析参数
 | SageMath | 有限域运算及 BPT 相关计算. |
 | JsonCpp | 读取和生成 JSON 数据. |
 
-从仓库根目录执行以下命令, 首先进入代码工程目录 `EasyBC-TruncatedDifferential/`. 依赖路径均为**占位符**, 需要按实际服务器安装位置修改; Gurobi 库版本为`gurobi130` .
+从仓库根目录执行以下命令, 首先进入代码目录 `EasyBC-TruncatedDifferential/`. 依赖路径均为**占位符**, 需要按实际服务器安装位置修改; Gurobi 库版本为`gurobi130` .
 
 ```bash
 cd EasyBC-TruncatedDifferential
@@ -87,7 +87,7 @@ cp parameter_examples/craft-sat-a0-sc-minus.txt parameters.txt
 (cd build && ./EasyBC)
 ```
 
-代码工程下的 `parameter_examples/` 提供 CRAFT 的 MILP `alpha=0/1` 配置, 以及 SAT 在不同目标搜索策略、编码方法和精度下的配置示例. 如需更换密码或轮数, 可修改相应参数文件.
+代码中 `parameter_examples/` 提供 CRAFT 的 MILP `alpha=0/1` 配置, 以及 SAT 在不同目标搜索策略、编码方法和精度下的配置示例. 如需更换密码或轮数, 可修改相应参数文件.
 
 ## 参数文件说明
 
